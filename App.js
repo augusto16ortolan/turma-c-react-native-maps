@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
@@ -66,8 +67,20 @@ const capitals = [
 ];
 
 export default function App() {
+  const [customMarkers, setCustomMarkers] = useState([]);
+
+  const handleMapPress = (event) => {
+    console.log(event.nativeEvent);
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setCustomMarkers((prevMarkers) => [
+      ...prevMarkers,
+      { latitude, longitude },
+    ]);
+  };
+
   return (
     <MapView
+      onPress={handleMapPress}
       provider="google"
       style={styles.map}
       initialRegion={{
@@ -85,6 +98,18 @@ export default function App() {
           longitudeDelta: 30,
         }}
       /> */}
+
+      {customMarkers.map((item, index) => (
+        <Marker
+          key={index}
+          coordinate={{
+            latitude: item.latitude,
+            longitude: item.longitude,
+            latitudeDelta: 30,
+            longitudeDelta: 30,
+          }}
+        ></Marker>
+      ))}
 
       {capitals.map((item, index) => (
         <Marker
